@@ -1,14 +1,29 @@
-# name: fxcfv
-# on: merge_group
-# jobs:
-#   build:
-#     runs-on:
-    
-  
+name: wf_test
 
-# workflow:
-#   rules:
-#     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - name: Install python
+              uses: actions/setup-python@v2
+                  with python-version:3.7
+            - name: Install deps
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install -r requirements.txt
+            - name: Run flake8
+              run: flake8 .
+            - name: Run mypy
+              run: mypy .
+            
+    
 
 # image: python:3.7
 
