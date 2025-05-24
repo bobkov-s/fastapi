@@ -4,10 +4,7 @@ import models
 from schemas import RecipeIn, RecipeOut
 from database import engine, session
 
-
 # uvicorn main: app --reload
-
-
 app = FastAPI()
 
 
@@ -62,7 +59,6 @@ async def get_recipes():
             models.Recipes
         ).order_by(models.Recipes.views.desc(), models.Recipes.cooking_time.asc()))
 
-    #resalt = await session.execute(select(models.Recipes).order_by(models.Recipes.views.desc(), models.Recipes.cooking_time.asc()))
     res = resalt.scalars().all()
 
     return [{"title": res[x].title, "views": res[x].views, "cooking_time": res[x].cooking_time} for x in range(len(res))]
@@ -88,7 +84,6 @@ async def get_recipes_id(recipe_id: int):
         .values(views=models.Recipes.views + 1)
     )
     await session.commit()
-    #await session.refresh(res)
 
     resalt = await session.execute(select(
         models.Recipes
