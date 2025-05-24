@@ -5,3 +5,9 @@ flake8-pie==0.15.0
 isort==5.9.3
 mypy==0.931
 pytest==7.0.1
+fastapi==0.115.12
+sqlalchemy==2.0.41
+uvicorn==0.34.2
+aiosqlite==0.21.0
+pydantic==2.11.5
+

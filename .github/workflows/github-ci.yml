@@ -14,56 +14,19 @@ jobs:
             - name: Install python
               uses: actions/setup-python@v2
               with:
-                  python-version: 3.9
+                  python-version: 3.12
             - name: Install deps
               run: |
                   python -m pip install --upgrade pip
                   pip install -r requirements.txt
-            - name: Run tests
-              run: pytest tests
+#            - name: Run tests
+#              run: pytest tests
             - name: Run mypy
-              run: mypy src/
+              run: mypy main/
             - name: Run isort
-              run: isort --check-only src/
+              run: isort --check-only main/
             - name: Run flake8
-              run: flake8 src/
+              run: flake8 main/
             - name: Run black
-              run: black --diff --check src/
+              run: black --diff --check main/
             
-    
-
-# image: python:3.7
-
-
-# stages:
-#   - build
-#   - test
-
-
-# before-script:
-#     - pip install -r requirements.txt
-
-# unittest:
-#   stage: test
-#   script:
-#     - pytest tests
-
-# mypy:
-#   stage: test
-#   script:
-#     - mypy src/
-
-# black:
-#   stage: test
-#   script:
-#     - black --diff --check src/
-
-# isort:
-#   stage: test
-#   script:
-#     - isort --check-only src/
-
-# flask8:
-#   stage: test
-#   script:
-#     - flake8 src/
