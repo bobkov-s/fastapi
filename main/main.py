@@ -1,3 +1,4 @@
+import sys
 from sqlalchemy import select, update
 from fastapi import FastAPI
 import models
@@ -5,6 +6,7 @@ from schemas import RecipeIn, RecipeOut
 from database import engine, session
 
 # uvicorn main: app --reload
+sys.path.append('main/')
 app = FastAPI()
 
 
