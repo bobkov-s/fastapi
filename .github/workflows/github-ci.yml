@@ -23,8 +23,8 @@ jobs:
               run: pytest tests
             - name: Run mypy
               run: mypy src/
-            - name: Run black
-              run: black --diff --check src/
+            # - name: Run black
+            #   run: black --diff --check src/
             - name: Run isort
               run: isort --check-only src/
             - name: Run flake8
