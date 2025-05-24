@@ -1,5 +1,5 @@
-from fastapi import FastAPI
 from sqlalchemy import select, update
+from fastapi import FastAPI
 import models
 from schemas import RecipeIn, RecipeOut
 from database import engine, session
