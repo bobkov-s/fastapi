@@ -19,12 +19,16 @@ jobs:
               run: |
                   python -m pip install --upgrade pip
                   pip install -r requirements.txt
-            # - name: Run flake8
-            #   run: flake8 .
             - name: Run tests
               run: pytest tests
             - name: Run mypy
               run: mypy src/
+            - name: Run black
+              run: black --diff --check src/
+            - name: Run isort
+              run: isort --check-only src/
+            - name: Run flake8
+              run: flake8 src/
             
     
 
