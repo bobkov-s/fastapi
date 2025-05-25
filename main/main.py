@@ -47,6 +47,7 @@ async def post_recipes(recipe: RecipeIn) -> models.Recipes:
         session.add(new_recipe)
     return new_recipe
 
+
 @app.get("/recipes/")
 async def get_recipes():
     """
