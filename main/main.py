@@ -1,12 +1,13 @@
-import sys
-from sqlalchemy import select, update
-from fastapi import FastAPI
+# import sys
 import models
-from schemas import RecipeIn, RecipeOut
 from database import engine, session
+from schemas import RecipeIn, RecipeOut
+from sqlalchemy import select, update
+
+from fastapi import FastAPI
 
 # uvicorn main:app --reload
-sys.path.append("/home/runner/work/fastapi/fastapi/main/")
+# sys.path.append("/home/runner/work/fastapi/fastapi/main/")
 app = FastAPI()
 
 
