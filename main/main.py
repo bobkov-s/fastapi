@@ -5,7 +5,7 @@ import models
 from schemas import RecipeIn, RecipeOut
 from database import engine, session
 
-# uvicorn main: app --reload
+# uvicorn main:app --reload
 sys.path.append('main/')
 app = FastAPI()
 
