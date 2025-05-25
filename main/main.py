@@ -17,10 +17,10 @@ async def shutdown():
         await conn.run_sync(models.Base.metadata.create_all)
 
 
-@app.on_event("shutdown")
-async def shutdown():
-    await session.close()
-    await engine.dispose()
+# @app.on_event("shutdown")
+# async def shutdown():
+#     await session.close()
+#     await engine.dispose()
 
 
 # Эндпоинты API

@@ -10,7 +10,8 @@ class RecipeBase(BaseModel):
 
 
 # Создание блюда
-class RecipeIn(RecipeBase): ...
+class RecipeIn(RecipeBase):
+    pass
 
 
 class RecipeOut(RecipeBase):
