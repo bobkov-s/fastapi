@@ -47,7 +47,7 @@ async def post_recipes(recipe: RecipeIn) -> models.Recipes:
         session.add(new_recipe)
     return new_recipe
 
-@app.get('/recipes/')
+@app.get("/recipes/")
 async def get_recipes():
     """
     Получает список всех рецептов с пагинацией.
@@ -68,7 +68,7 @@ async def get_recipes():
         {
             "title": res[x].title,
             "views": res[x].views,
-            "cooking_time": res[x].cooking_time
+            "cooking_time": res[x].cooking_time,
         }
         for x in range(len(res))
     ]
