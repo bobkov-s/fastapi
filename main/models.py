@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Text
-from main.database import Base
+from database import Base
 
 
 class Recipes(Base):
