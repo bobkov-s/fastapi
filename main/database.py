@@ -6,5 +6,5 @@ DATABASE_URL = "sqlite+aiosqlite:///./DB_hw_26.db"
 
 engine = create_async_engine(DATABASE_URL, echo=True)
 Base = declarative_base()
-asc_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
-session = asc_session()
+session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+# session = asc_session()
