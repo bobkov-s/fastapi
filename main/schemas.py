@@ -10,8 +10,7 @@ class RecipeBase(BaseModel):
 
 
 # Создание блюда
-class RecipeIn(RecipeBase):
-    ...
+class RecipeIn(RecipeBase): ...
 
 
 class RecipeOut(RecipeBase):
@@ -20,4 +19,3 @@ class RecipeOut(RecipeBase):
 
     class Config:
         orm_mode = True
-

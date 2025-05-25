@@ -6,7 +6,7 @@ from schemas import RecipeIn, RecipeOut
 from database import engine, session
 
 # uvicorn main:app --reload
-sys.path.append('/home/runner/work/fastapi/fastapi/main/')
+sys.path.append("/home/runner/work/fastapi/fastapi/main/")
 app = FastAPI()
 
 
@@ -26,7 +26,7 @@ async def shutdown():
 @app.get("/")
 def root():
     """
-        Создает приветственное сообщение.
+    Создает приветственное сообщение.
     """
     return {"message": "Добро пожаловать в API Кулинарной книги!"}
 
@@ -57,13 +57,21 @@ async def get_recipes():
         2. По времени приготовления (по возрастанию)
     """
     resalt = await session.execute(
-        select(
-            models.Recipes
-        ).order_by(models.Recipes.views.desc(), models.Recipes.cooking_time.asc()))
+        select(models.Recipes).order_by(
+            models.Recipes.views.desc(), models.Recipes.cooking_time.asc()
+        )
+    )
 
     res = resalt.scalars().all()
 
-    return [{"title": res[x].title, "views": res[x].views, "cooking_time": res[x].cooking_time} for x in range(len(res))]
+    return [
+        {
+            "title": res[x].title,
+            "views": res[x].views,
+            "cooking_time": res[x].cooking_time
+        }
+        for x in range(len(res))
+    ]
 
 
 @app.get("/recipes/{recipe_id}")
@@ -87,14 +95,14 @@ async def get_recipes_id(recipe_id: int):
     )
     await session.commit()
 
-    resalt = await session.execute(select(
-        models.Recipes
-    ).filter(models.Recipes.id == recipe_id))
+    resalt = await session.execute(
+        select(models.Recipes).filter(models.Recipes.id == recipe_id)
+    )
 
     res = resalt.scalars().first()
     return {
         "title": res.title,
         "cooking_time": res.cooking_time,
         "ingredients": res.ingredients,
-        "description": res.description
+        "description": res.description,
     }

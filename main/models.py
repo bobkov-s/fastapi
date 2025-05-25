@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, Text, Boolean
 from database import Base
 
+
 class Recipes(Base):
     __tablename__ = "Recipes"
 
@@ -10,7 +11,3 @@ class Recipes(Base):
     ingredients = Column(Text, nullable=False)
     description = Column(Text)
     views = Column(Integer, default=0)
-
-
-
-
