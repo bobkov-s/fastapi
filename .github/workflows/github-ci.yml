@@ -23,9 +23,9 @@ jobs:
 #              run: pytest tests
             - name: Run black
               run: black --diff --check main/
-            - name: Run isort
-              run: isort --check-only main/
             - name: Run flake8
               run: flake8 main/
             - name: Run mypy
               run: mypy main/
+            - name: Run isort
+              run: isort --check-only main/
