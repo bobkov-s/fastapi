@@ -1,9 +1,9 @@
 import sys
 from sqlalchemy import select, update
 from fastapi import FastAPI
-import models
-from schemas import RecipeIn, RecipeOut
-from database import engine, session
+import main.models
+from main.schemas import RecipeIn, RecipeOut
+from main.database import engine, session
 
 # uvicorn main:app --reload
 sys.path.append("/home/runner/work/fastapi/fastapi/main/")
@@ -13,7 +13,7 @@ app = FastAPI()
 @app.on_event("startup")
 async def shutdown():
     async with engine.begin() as conn:
-        await conn.run_sync(models.Base.metadata.create_all)
+        await conn.run_sync(main.models.Base.metadata.create_all)
 
 
 @app.on_event("shutdown")
@@ -32,7 +32,7 @@ def root():
 
 
 @app.post("/recipes/", response_model=RecipeOut)
-async def post_recipes(recipe: RecipeIn) -> models.Recipes:
+async def post_recipes(recipe: RecipeIn) -> main.models.Recipes:
     """
     Создает новый рецепт в базе данных.
 
@@ -42,7 +42,7 @@ async def post_recipes(recipe: RecipeIn) -> models.Recipes:
     - **description**: Текстовое описание рецепта
     """
 
-    new_recipe = models.Recipes(**recipe.dict())
+    new_recipe = main.models.Recipes(**recipe.dict())
     async with session.begin():
         session.add(new_recipe)
     return new_recipe
@@ -58,8 +58,8 @@ async def get_recipes():
         2. По времени приготовления (по возрастанию)
     """
     resalt = await session.execute(
-        select(models.Recipes).order_by(
-            models.Recipes.views.desc(), models.Recipes.cooking_time.asc()
+        select(main.models.Recipes).order_by(
+            main.models.Recipes.views.desc(), main.models.Recipes.cooking_time.asc()
         )
     )
 
@@ -90,14 +90,14 @@ async def get_recipes_id(recipe_id: int):
     """
 
     await session.execute(
-        update(models.Recipes)
-        .where(models.Recipes.id == recipe_id)
-        .values(views=models.Recipes.views + 1)
+        update(main.models.Recipes)
+        .where(main.models.Recipes.id == recipe_id)
+        .values(views=main.models.Recipes.views + 1)
     )
     await session.commit()
 
     resalt = await session.execute(
-        select(models.Recipes).filter(models.Recipes.id == recipe_id)
+        select(main.models.Recipes).filter(main.models.Recipes.id == recipe_id)
     )
 
     res = resalt.scalars().first()
