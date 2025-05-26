@@ -23,8 +23,8 @@ jobs:
               run: black --diff --check main/
             - name: Run isort
               run: isort --check-only --profile black main/
+            - name: Run mypy
+              working-directory: main
+              run: mypy .
             - name: Run flake8
               run: flake8 main/
-#            - name: Run mypy
-#              run: mypy main/
-
