@@ -1,10 +1,10 @@
 # import sys
-import models
-from database import engine, a_sess, AsyncSession
-from schemas import RecipeIn, RecipeOut
+from fastapi import Depends, FastAPI
 from sqlalchemy import select, update
 
-from fastapi import FastAPI, Depends
+import models
+from database import AsyncSession, a_sess, engine
+from schemas import RecipeIn, RecipeOut
 
 # uvicorn main:app --reload
 # sys.path.append("/home/runner/work/fastapi/fastapi/main/")
