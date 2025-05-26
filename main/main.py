@@ -1,6 +1,6 @@
 # import sys
 import models
-from database import engine, async_session, AsyncSession
+from database import engine, a_sess, AsyncSession
 from schemas import RecipeIn, RecipeOut
 from sqlalchemy import select, update
 
@@ -18,7 +18,7 @@ async def shutdown():
 
 
 async def get_db() -> AsyncSession:
-    async with async_session() as session:
+    async with a_sess() as session:
         yield session
 
 
