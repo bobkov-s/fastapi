@@ -1,4 +1,5 @@
 # import sys
+from typing import AsyncGenerator
 from fastapi import Depends, FastAPI
 from sqlalchemy import select, update
 
@@ -17,7 +18,7 @@ async def shutdown():
         await conn.run_sync(models.Base.metadata.create_all)
 
 
-async def get_db() -> AsyncSession:
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
     async with a_sess() as session:
         yield session
 
