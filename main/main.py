@@ -46,7 +46,7 @@ async def post_recipes(recipe: RecipeIn) -> models.Recipes:
     new_recipe = models.Recipes(**recipe.dict())
     async with async_session() as session:
         session.add(new_recipe)
-    return new_recipe
+        return new_recipe
 
 
 @app.get("/recipes/")
