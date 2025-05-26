@@ -1,6 +1,6 @@
 # import sys
 import models
-from database import engine, session
+from database import engine, async_session
 from schemas import RecipeIn, RecipeOut
 from sqlalchemy import select, update
 
@@ -44,7 +44,7 @@ async def post_recipes(recipe: RecipeIn) -> models.Recipes:
     """
 
     new_recipe = models.Recipes(**recipe.dict())
-    async with session.begin():
+    async with async_session() as session:
         session.add(new_recipe)
     return new_recipe
 
@@ -58,22 +58,23 @@ async def get_recipes():
         1. По количеству просмотров (по убыванию)
         2. По времени приготовления (по возрастанию)
     """
-    resalt = await session.execute(
-        select(models.Recipes).order_by(
-            models.Recipes.views.desc(), models.Recipes.cooking_time.asc()
+    async with async_session() as session:
+        resalt = await session.execute(
+            select(models.Recipes).order_by(
+                models.Recipes.views.desc(), models.Recipes.cooking_time.asc()
+            )
         )
-    )
 
-    res = resalt.scalars().all()
+        res = resalt.scalars().all()
 
-    return [
-        {
-            "title": res[x].title,
-            "views": res[x].views,
-            "cooking_time": res[x].cooking_time,
-        }
-        for x in range(len(res))
-    ]
+        return [
+            {
+                "title": res[x].title,
+                "views": res[x].views,
+                "cooking_time": res[x].cooking_time,
+            }
+            for x in range(len(res))
+        ]
 
 
 @app.get("/recipes/{recipe_id}")
@@ -90,21 +91,23 @@ async def get_recipes_id(recipe_id: int):
     - Описание рецепта
     """
 
-    await session.execute(
-        update(models.Recipes)
-        .where(models.Recipes.id == recipe_id)
-        .values(views=models.Recipes.views + 1)
-    )
-    await session.commit()
+    async with async_session() as session:
 
-    resalt = await session.execute(
-        select(models.Recipes).filter(models.Recipes.id == recipe_id)
-    )
+        await session.execute(
+            update(models.Recipes)
+            .where(models.Recipes.id == recipe_id)
+            .values(views=models.Recipes.views + 1)
+        )
+        await session.commit()
 
-    res = resalt.scalars().first()
-    return {
-        "title": res.title,
-        "cooking_time": res.cooking_time,
-        "ingredients": res.ingredients,
-        "description": res.description,
-    }
+        resalt = await session.execute(
+            select(models.Recipes).filter(models.Recipes.id == recipe_id)
+        )
+
+        res = resalt.scalars().first()
+        return {
+            "title": res.title,
+            "cooking_time": res.cooking_time,
+            "ingredients": res.ingredients,
+            "description": res.description,
+        }
