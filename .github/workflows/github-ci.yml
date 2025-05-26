@@ -22,7 +22,7 @@ jobs:
             - name: Run black
               run: black --diff --check main/
             - name: Run isort
-              run: isort --check-only --profile black main/
+              run: isort --check-only main/   # --profile black
             - name: Run flake8
               run: flake8 main/
             - name: Run mypy
