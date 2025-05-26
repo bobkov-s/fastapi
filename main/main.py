@@ -1,10 +1,10 @@
 # import sys
 import models
-from database import engine, async_session
+from database import engine, async_session, AsyncSession
 from schemas import RecipeIn, RecipeOut
 from sqlalchemy import select, update
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 
 # uvicorn main:app --reload
 # sys.path.append("/home/runner/work/fastapi/fastapi/main/")
@@ -15,6 +15,11 @@ app = FastAPI()
 async def shutdown():
     async with engine.begin() as conn:
         await conn.run_sync(models.Base.metadata.create_all)
+
+
+async def get_db() -> AsyncSession:
+    async with async_session() as session:
+        yield session
 
 
 # @app.on_event("shutdown")
@@ -33,7 +38,7 @@ def root():
 
 
 @app.post("/recipes/", response_model=RecipeOut)
-async def post_recipes(recipe: RecipeIn) -> models.Recipes:
+async def post_recipes(recipe: RecipeIn, db=Depends(get_db)) -> models.Recipes:
     """
     Создает новый рецепт в базе данных.
 
@@ -44,13 +49,14 @@ async def post_recipes(recipe: RecipeIn) -> models.Recipes:
     """
 
     new_recipe = models.Recipes(**recipe.dict())
-    async with async_session() as session:
-        session.add(new_recipe)
-        return new_recipe
+    db.add(new_recipe)
+    await db.commit()
+    await db.refresh(new_recipe)
+    return new_recipe
 
 
 @app.get("/recipes/")
-async def get_recipes():
+async def get_recipes(db=Depends(get_db)):
     """
     Получает список всех рецептов с пагинацией.
 
@@ -58,27 +64,27 @@ async def get_recipes():
         1. По количеству просмотров (по убыванию)
         2. По времени приготовления (по возрастанию)
     """
-    async with async_session() as session:
-        resalt = await session.execute(
-            select(models.Recipes).order_by(
-                models.Recipes.views.desc(), models.Recipes.cooking_time.asc()
-            )
+
+    resalt = await db.execute(
+        select(models.Recipes).order_by(
+            models.Recipes.views.desc(), models.Recipes.cooking_time.asc()
         )
+    )
 
-        res = resalt.scalars().all()
+    res = resalt.scalars().all()
 
-        return [
-            {
-                "title": res[x].title,
-                "views": res[x].views,
-                "cooking_time": res[x].cooking_time,
-            }
-            for x in range(len(res))
-        ]
+    return [
+        {
+            "title": res[x].title,
+            "views": res[x].views,
+            "cooking_time": res[x].cooking_time,
+        }
+        for x in range(len(res))
+    ]
 
 
 @app.get("/recipes/{recipe_id}")
-async def get_recipes_id(recipe_id: int):
+async def get_recipes_id(recipe_id: int, db=Depends(get_db)):
     """
     Получает детальную информацию о рецепте по его ID.
 
@@ -91,23 +97,21 @@ async def get_recipes_id(recipe_id: int):
     - Описание рецепта
     """
 
-    async with async_session() as session:
+    await db.execute(
+        update(models.Recipes)
+        .where(models.Recipes.id == recipe_id)
+        .values(views=models.Recipes.views + 1)
+    )
+    await db.commit()
 
-        await session.execute(
-            update(models.Recipes)
-            .where(models.Recipes.id == recipe_id)
-            .values(views=models.Recipes.views + 1)
-        )
-        await session.commit()
+    resalt = await db.execute(
+        select(models.Recipes).filter(models.Recipes.id == recipe_id)
+    )
 
-        resalt = await session.execute(
-            select(models.Recipes).filter(models.Recipes.id == recipe_id)
-        )
-
-        res = resalt.scalars().first()
-        return {
-            "title": res.title,
-            "cooking_time": res.cooking_time,
-            "ingredients": res.ingredients,
-            "description": res.description,
-        }
+    res = resalt.scalars().first()
+    return {
+        "title": res.title,
+        "cooking_time": res.cooking_time,
+        "ingredients": res.ingredients,
+        "description": res.description,
+    }
