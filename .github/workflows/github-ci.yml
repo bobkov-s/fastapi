@@ -27,5 +27,5 @@ jobs:
               run: flake8 main/
             - name: Run mypy
               working-directory: main
-              run: mypy main/
+              run: mypy .
 
